@@ -22,8 +22,6 @@ class Maze
     };
 
     int grid_X , grid_Y;
-    Node nodeS;
-    Node nodeE;
 
     bool** grid; 
     char** graph;
@@ -32,7 +30,7 @@ class Maze
     size_t totNodes;
     int** adjacencyMatrix;
 
-    Maze(const char* buff, Node S, Node E): nodeS(S.x, S.y), nodeE(E.x, E.y)
+    Maze(const char* buff)
     {
         std::string filename(buff);
         std::ifstream file(filename);
@@ -123,13 +121,7 @@ class Maze
             {
                 if(grid[i][j] == true)
                 {
-                    if((i == nodeS.x && j == nodeS.y) || (i == nodeE.x && j == nodeE.y))
-                    {
-                        Node node(i,j);
-                        graph[i][j] = 'N';
-                        nodeList.push_back(node);
-                        indexMap[node] = nodeList.size()-1;
-                    }else if(isNode(i,j))
+                    if(isNode(i,j))
                     {
                         Node node(i,j);
                         graph[i][j] = 'N';
@@ -285,7 +277,7 @@ class Maze
 int main()
 {
 
-   Maze maze1("maze1.txt", Maze::Node(0,5), Maze::Node(9,5));
+   Maze maze1("maze1.txt");
    std::cout<< "maze1: " << std::endl;
 
    maze1.print();
