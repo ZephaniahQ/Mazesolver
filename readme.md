@@ -2,8 +2,15 @@
 
 This project includes 
 
-- ## Mazekmaker
- A tool that uses c++(sfml+imgui) to make a maze and then output a bit array
- 
-- ## Mazesolver
-A tool that will convert the maze into a graph data structure and pathfind through it using popular algorithms such as Djikstra's and Bellman Ford.
+- ## Mazersolver-cli
+
+A cli version of this tool that was originaly for protoyping the logic
+
+- ## Mazersolver-SFML
+
+A Gui version built from the cli tool that will be able to create and solve mazes as well
+as scan and solve pixel mazes from images
+
+The goal is to learn and practice the graph data structure and implement
+shortest path algorithms like Dijkstra's and A*
+
