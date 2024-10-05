@@ -352,7 +352,7 @@ class Maze
             return;
 
         visited[s] = true;
-        cout << "visited: " << s << "(" << nodeList[s].x << "," << nodeList[s].y <<  endl;
+        cout << "visited: " << s << " (" << nodeList[s].x << "," << nodeList[s].y << ")" << endl;
 
         if(!found)
         for(int i = 0; i< totNodes; i++)
@@ -364,6 +364,7 @@ class Maze
 
     void dfs()
     {
+        cout << endl << "Searching Path through DFS: " << endl;
         bool found = false;
         Stack<int> path;
         bool* visited = new bool[totNodes]();
