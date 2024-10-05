@@ -352,7 +352,7 @@ class Maze
             return;
 
         visited[s] = true;
-        cout << "visited: " << s << endl;
+        cout << "visited: " << s << "(" << nodeList[s].x << "," << nodeList[s].y <<  endl;
 
         if(!found)
         for(int i = 0; i< totNodes; i++)
