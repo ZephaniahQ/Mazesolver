@@ -6,6 +6,66 @@
 
 using namespace std;
 
+template <typename T>
+
+class Stack
+{
+    struct Node
+    {
+        T data;
+        Node*next = nullptr;
+        Node(T val) : data(val) {}
+    };
+
+    Node*top;
+
+    public:
+
+    Stack() : top(nullptr) {}
+
+    void push(T data)
+    {
+        Node* temp = new Node(data);
+        if(top == nullptr)
+            top = temp;
+        else
+        {
+            temp->next = top;
+            top = temp;
+        }
+    }
+
+    void pop()
+    {
+        if(top == nullptr)
+            return;
+        else
+        {
+            Node* temp = top;
+            top = top->next;
+            delete temp;
+        }
+    }
+
+    T& peek()
+    {
+        return top->data;
+    }
+
+    void print()
+    {
+        Node* temp = top;
+        while(temp != nullptr)
+        {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+};
+
+
 class Maze
 {
     public:
@@ -283,24 +343,35 @@ class Maze
         }
     }
 
-    void dfsRec(int** edgeList, bool* visited, int s)
+    void dfsRec(int** edgeList, bool* visited, int s, Stack<int>* path, bool& found)
     {
+        path->push(s);
+        if(path->peek() == indexMap[end])
+                found = true;
+        if(found)
+            return;
+
         visited[s] = true;
         cout << "visited: " << s << endl;
 
+        if(!found)
         for(int i = 0; i< totNodes; i++)
         {
-            if(adjacencyMatrix[s][i] > 0 && !visited[i])
-                dfsRec(adjacencyMatrix, visited, i);
-
+            if(adjacencyMatrix[s][i] > 0 && !visited[i] && !found)
+                dfsRec(adjacencyMatrix, visited, i, path, found);
         }
-        
     }
 
     void dfs()
     {
+        bool found = false;
+        Stack<int> path;
         bool* visited = new bool[totNodes]();
-        dfsRec(adjacencyMatrix, visited, indexMap[start]);
+        dfsRec(adjacencyMatrix, visited, indexMap[start], &path, found);
+
+        cout << "Path found from start to end!(in node indexes): " << endl;
+        path.print();
+
     }
 
 };
