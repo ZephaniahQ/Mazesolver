@@ -22,6 +22,8 @@ class Maze
     };
 
     int grid_X , grid_Y;
+    Node start;
+    Node end;
 
     bool** grid; 
     char** graph;
@@ -30,7 +32,7 @@ class Maze
     size_t totNodes;
     int** adjacencyMatrix;
 
-    Maze(const char* buff)
+    Maze(const char* buff, Node s, Node e): start(s.x, s.y), end(e.x, e.y)
     {
         std::string filename(buff);
         std::ifstream file(filename);
@@ -109,6 +111,11 @@ class Maze
             return true;
         else return false;
     }
+    
+    bool isStartorEnd(int x, int y)
+    {
+        return((x == start.x && y == start.y) || (x == end.x && y == end.y));
+    }
             
     void plotGraph()
     {
@@ -119,6 +126,14 @@ class Maze
             graph[i] = new char [grid_Y];
             for(int j = 0; j<grid_Y; j++)
             {
+                if(isStartorEnd(i,j))
+                {
+                    Node node(i,j);
+                    graph[i][j] = 'N';
+                    nodeList.push_back(node);
+                    indexMap[node] = nodeList.size()-1;
+                    continue;
+                }
                 if(grid[i][j] == true)
                 {
                     if(isNode(i,j))
@@ -138,6 +153,7 @@ class Maze
         }
 
         totNodes = nodeList.size();
+        adjacencyMatrix = new int*[totNodes];
     }
 
     void printGraph()
@@ -183,10 +199,11 @@ class Maze
 
         //check above
         
+        cout << "checking above" << endl;
         for( int i = row-1; i>=0; i--)
         {
             Ucount++;
-            if(grid[i][col] == false)
+            if(grid[i][col] == false && !(isStartorEnd(i,col)))
                     break;
             if(graph[i][col] == 'N')
             {
@@ -198,10 +215,11 @@ class Maze
 
         //check down
         
-        for(int i = row+1; i<= grid_X; i++)
+        cout << "checking down" << endl;
+        for(int i = row+1; i< grid_X; i++)
         {
             Dcount++;
-            if(grid[i][col] == false)
+            if(grid[i][col] == false && !(isStartorEnd(i,col)))
                     break;
             if(graph[i][col] == 'N')
             {
@@ -213,10 +231,11 @@ class Maze
 
         //check left
         
+        cout << "checking left" << endl;
         for(int i = col-1; i>=0; i--)
         {
             Lcount++;
-            if(grid[row][i] == false)
+            if(grid[row][i] == false && !(isStartorEnd(i,col)))
                 break;
             if(graph[row][i] == 'N')
             {
@@ -228,10 +247,11 @@ class Maze
 
         //check right
 
-        for(int i = col+1; i<= grid_Y; i++)
+        cout << "checking right" << endl;
+        for(int i = col+1; i< grid_Y; i++)
         {
             Rcount++;
-            if(grid[row][i] == false)
+            if(grid[row][i] == false && !(isStartorEnd(i,col)))
                 break;
             if(graph[row][i] == 'N')
             {
@@ -248,6 +268,7 @@ class Maze
     {
         for(int i = 0; i<totNodes; i++)
         {
+            cout << "edge list of row: " << i << endl;
             adjacencyMatrix[i] = getEdgeList(nodeList[i]);
         }
     }
@@ -262,14 +283,24 @@ class Maze
         }
     }
 
-    void dfs_util()
+    void dfsRec(int** edgeList, bool* visited, int s)
     {
+        visited[s] = true;
+        cout << "visited: " << s << endl;
 
+        for(int i = 0; i< totNodes; i++)
+        {
+            if(adjacencyMatrix[s][i] > 0 && !visited[i])
+                dfsRec(adjacencyMatrix, visited, i);
+
+        }
+        
     }
 
     void dfs()
     {
-
+        bool* visited = new bool[totNodes]();
+        dfsRec(adjacencyMatrix, visited, indexMap[start]);
     }
 
 };
@@ -277,7 +308,7 @@ class Maze
 int main()
 {
 
-   Maze maze1("maze1.txt");
+   Maze maze1("maze1.txt", Maze::Node(0,5),Maze::Node(9,5));
    std::cout<< "maze1: " << std::endl;
 
    maze1.print();
@@ -287,12 +318,15 @@ int main()
    maze1.printGraph();
    
    cout << endl;
+   cout << "mazelist: " << endl;
    maze1.printNodeList();
 
+   cout << "making adj matrix: " << endl;
    maze1.makeAdjacencyMatrix();
 
    cout << endl << endl;
 
    maze1.printDistanceMatrix();
+   maze1.dfs();
 }
 
