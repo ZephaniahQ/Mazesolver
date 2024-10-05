@@ -6,6 +6,9 @@
 
 using namespace std;
 
+static const char * CSI = "\33[";
+
+
 template <typename T>
 
 class Stack
@@ -92,6 +95,8 @@ class Maze
     size_t totNodes;
     int** adjacencyMatrix;
 
+    Stack<int> path;
+
     Maze(const char* buff, Node s, Node e): start(s.x, s.y), end(e.x, e.y)
     {
         std::string filename(buff);
@@ -133,6 +138,21 @@ class Maze
             for(int j = 0; j<grid_Y; j++)
                 std::cout<< grid[i][j];
             std::cout << std::endl;
+        }
+    }
+
+    void printColored()
+    {
+        for(int i = 0; i<grid_X; i++)
+        {
+            for(int j = 0; j<grid_Y; j++)
+                if(grid[i][j])
+                    printf( "%s%s▇▇", CSI, "37m" ); 
+                else
+                    printf( "%s%s▇▇", CSI, "30m" );
+            std::cout << '\n';
+            printf("%s", CSI);
+            printf("0m");
         }
     }
 
@@ -222,6 +242,27 @@ class Maze
         {
             for(int j = 0; j<grid_Y; j++)
                 std::cout << graph[i][j];
+            std::cout<< std::endl;
+        }
+    }
+
+    void printGraphAnsi()
+    {
+        for(int i = 0; i<grid_X; i++)
+        {
+            for(int j = 0; j<grid_Y; j++)
+            {
+                if(graph[i][j] == '1')
+                {
+                    printf( "%s%s▇▇", CSI, "37m" ); 
+                }
+                else if(graph[i][j] == 'N')
+                {
+                    printf( "%s%s▇▇", CSI, "33m" ); 
+                }
+                else printf( "%s%s▇▇", CSI, "30m" ); 
+                    
+            }
             std::cout<< std::endl;
         }
     }
@@ -366,7 +407,6 @@ class Maze
     {
         cout << endl << "Searching Path through DFS: " << endl;
         bool found = false;
-        Stack<int> path;
         bool* visited = new bool[totNodes]();
         dfsRec(adjacencyMatrix, visited, indexMap[start], &path, found);
 
@@ -400,5 +440,10 @@ int main()
 
    maze1.printDistanceMatrix();
    maze1.dfs();
+
+   cout << "Maze:" << endl;
+   maze1.printColored();
+   cout << "Nodes placed:" << endl; 
+   maze1.printGraphAnsi();
 }
 
